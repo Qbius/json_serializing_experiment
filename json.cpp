@@ -5,7 +5,7 @@
 namespace json
 {
     template <typename T>
-    std::string parse(const T&);
+    std::string parse(T);
 
     class Key
     {
@@ -27,7 +27,7 @@ namespace json
 
         std::string dump() const
         {
-            return name + ":" + valu;
+            return "\"" + name + "\":" + valu;
         }
     };
 
@@ -37,14 +37,23 @@ namespace json
     }
 
     template <>
-    std::string parse<int>(const int& i)
+    std::string parse<int>(int i)
     {
+        std::cout << "Parsed int" << std::endl;
         return std::to_string(i);
     }
 
     template <>
-    std::string parse<std::initializer_list<Key>>(const std::initializer_list<Key>& ilist)
+    std::string parse<const char*>(const char* c)
     {
+        std::cout << "Parsed text" << std::endl;
+        return "\"" + std::string(c) + "\"";
+    }
+
+    template <>
+    std::string parse<std::initializer_list<Key>>(std::initializer_list<Key> ilist)
+    {
+        std::cout << "Parsed object" << std::endl;
         std::string result;
         for (const auto& e : ilist)
         {
@@ -59,10 +68,12 @@ int main()
 {
     using namespace json;
 
-    auto k = {
-        "stat"k = {
-            "period"k = 2
+    auto json_obj = {
+        "period"k = 2,
+        "status"k = 4,
+        "product"k = {
+            "name"k = "jerry"
         }
     };
-    std::cout << json::parse(k);
+    std::cout << json::parse(json_obj);
 }
